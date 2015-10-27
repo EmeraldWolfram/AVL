@@ -9,9 +9,8 @@ struct Node_t{
   Node *right;
 };
 
-Node* createNode(int thisData);
+Node* createNode(int thisData, int thisBF);
 Node* linkNode(Node* root, Node* left, Node* right);
-Node* initializeTreeForLeftTest();
-Node* initializeTreeForRightTest();
+
 
 #endif // Node_H
