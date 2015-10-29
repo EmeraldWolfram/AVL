@@ -3,9 +3,11 @@
 #include <stdio.h>
 
 void rightRotate(Node** tree){
-  Node* newRoot = (*tree)->left;
   Node* brokenNode = (*tree)->left->right;
   Node* rightNode = (*tree);
+  
+  (*tree)->balanceFactor++;
+  (*tree)->right->balanceFactor++; 
   
   *tree = (*tree)->left;
   (*tree)->right = rightNode;
@@ -13,9 +15,11 @@ void rightRotate(Node** tree){
 }
 
 void leftRotate(Node** tree){
-  Node* newRoot = (*tree)->right;
   Node* brokenNode = (*tree)->right->left;
   Node* leftNode = (*tree);
+  
+  (*tree)->balanceFactor--;
+  (*tree)->right->balanceFactor--;  
   
   *tree = (*tree)->right;
   (*tree)->left = leftNode;

@@ -50,12 +50,17 @@ void test_avlAdd_given_10_add_30_should_place_at_right_side(void){
   TEST_ASSERT_EQUAL(0, root->balanceFactor);
 	int i = avlAdd(&root, &node30);
   TEST_ASSERT_EQUAL(1, i);
+//TEST_ASSERT_TREE_LINK(Node* expectNode, Node* expectLeft, Node* expectRight, Node* actualNode)
   TEST_ASSERT_TREE_LINK(&node10, NULL, &node30, root);
 }
 
 
 /**
- *  Adding node60 to Tree A should remain the balanceFactor of node20 as 1
+ *  Adding node60 to Tree A should link the node60 at rightest bottom and 
+ *  form tree B.
+ *
+ *  The balance factor of node20 should remain 1
+ *  Similarly, balance factor of node40 should increase from -1 to 0
  *
  *  Tree A            Tree B
  *    (20)              (20)
@@ -69,17 +74,26 @@ void test_avlAdd_given_treeA_add_60_should_become_tree_B(void){
   Node* root = &node20;
   linkNode(&node20, &node10, &node40);
   linkNode(&node40, &node30, NULL);
-  root->balanceFactor = 1;
+  root->balanceFactor   = 1;
+  node40.balanceFactor  = -1;
   
   TEST_ASSERT_EQUAL(1, root->balanceFactor);
 	int i = avlAdd(&root, &node60);
-  TEST_ASSERT_EQUAL(1, i);
+  TEST_ASSERT_EQUAL(0, i);
   TEST_ASSERT_TREE_LINK(&node20, &node10, &node40, root);
   TEST_ASSERT_TREE_LINK(&node40, &node30, &node60, root->right);
+//TEST_ASSERT_EQUAL_NODE(expectedData, expectedBalanceFactor, actualNode);
+  TEST_ASSERT_EQUAL_NODE(20, 1, &node20);
+  TEST_ASSERT_EQUAL_NODE(40, 0, &node40);
 }
 
 /**
- *  Adding node10 to Tree A should reduce the balanceFactor of node40 to 0
+ *  Adding node10 to Tree A should link node10 to most left and most bottom
+ *  to form Tree B
+ *
+ *  Balance Factor that should change:
+ *  1. node20     from 0 to -1
+ *  2. node40     from 1 to 0
  *
  *  Tree A            Tree B
  *    (40)              (40)
@@ -100,7 +114,11 @@ void test_avlAdd_given_treeA_add_10_should_become_tree_B(void){
   TEST_ASSERT_EQUAL(0, i);
   TEST_ASSERT_TREE_LINK(&node40, &node20, &node60, root);
   TEST_ASSERT_TREE_LINK(&node20, &node10, NULL, root->left);
+  
+  TEST_ASSERT_EQUAL_NODE(20, -1, &node20);
+  TEST_ASSERT_EQUAL_NODE(40,  0, &node40);
 }
+
 
 
 

@@ -14,11 +14,11 @@ Node* createNode(int thisData, int thisBF){
 Node* linkNode(Node* root, Node* thisLeft, Node* thisRight){
   if(thisRight != NULL){
     root->right = thisRight;
-    root->balanceFactor++;
+    // root->balanceFactor++;
   }
   if(thisLeft != NULL){
     root->left  = thisLeft;
-    root->balanceFactor--;
+    // root->balanceFactor--;
   }
   
   return root;

@@ -1,5 +1,6 @@
 #include "unity.h"
 #include "Rotation.h"
+#include "Avl.h"
 #include "Node.h"
 #include "customAssertion.h"
 #include <stdlib.h>
@@ -195,5 +196,99 @@ void test_leftRightRotate_given_treeA_should_rotate_to_treeB(void){
   Node* rightNode  = testTree->right;
   TEST_ASSERT_TREE_LINK(&node70, &node60, &node90, rightNode);
   TEST_ASSERT_TREE_LINK(&node90, &node80, &node100, rightNode->right);
-
 }
+
+/****************************************************
+ *  Test for case (0,0,0)                           *
+ *                                                  *
+ *  Tree A                                          *
+ *    (60)        Balance Factor:                   *
+ *       \        1. node60     +2                  *
+ *       (90)     2. node90      0                  *
+ *       /  \     3. node80      0                  *
+ *    (80) (100)  4. node100     0                  *
+ ****************************************************
+ *  After Left Rotation, Tree A become Tree B       *
+ *                                                  *
+ *  Tree B                                          *
+ *    (90)        Balance Factor:                   *
+ *    /  \        1. node60     +1                  *
+ *  (60)(100)     2. node90     -1                  *
+ *     \          3. node80      0                  *
+ *    (80)        4. node100     0                  *
+ ****************************************************/
+void test_leftRotate_given_treeA_with_case000_should_rotate_to_treeB_with_appropriate_BF(void){
+  Node* testTree = &node60;
+    
+  int i = avlAdd(&testTree, &node90);
+  i = avlAdd(&testTree, &node80);
+  i = avlAdd(&testTree, &node100);
+  
+  leftRotate(&testTree);
+  
+  TEST_ASSERT_EQUAL_NODE(60,  1, &node60);
+  TEST_ASSERT_EQUAL_NODE(90, -1, &node90);
+  TEST_ASSERT_EQUAL_NODE(80,  0, &node80);
+  TEST_ASSERT_EQUAL_NODE(100, 0, &node100);
+}
+
+/****************************************************
+ *  Test for case (0,0,1)                           *
+ *                                                  *
+ *  Tree A            Balance Factor:               *
+ *    (60)            1. node60     +2              *
+ *    /  \            2. node40      0              *
+ *  (40) (100)        3. node100     0              *
+ *       /   \        4. node80      0              *
+ *    (80)   (120)    5. node120    +1              *
+ *    /  \      \     6. node70      0              *
+ * (70) (90)   (140)  7. node90      0              *
+ *                    8. node140     0              *
+ ****************************************************
+ *  After Left Rotation, Tree A become Tree B       *
+ *                                                  *
+ *  Tree B            Balance Factor:               *
+ *    (100)           1. node60     +1              *
+ *    /   \           2. node40      0              *
+ *  (60) (120)        3. node100    -1              *
+ *  /  \     \        4. node80      0              *
+ *(40)(80)  (140)     5. node120    +1              *
+ *    /  \            6. node70      0              *
+ *  (70)(90)          7. node90      0              *
+ *                    8. node140     0              *
+ ****************************************************/
+void test_leftRotate_given_treeA_with_case001_should_rotate_to_treeB_with_appropriate_BF(void){
+  Node* testTree = &node60;
+  int i = avlAdd(&testTree, &node40);
+  i = avlAdd(&testTree, &node100);
+  i = avlAdd(&testTree, &node80);
+  i = avlAdd(&testTree, &node120);
+  i = avlAdd(&testTree, &node70);
+  i = avlAdd(&testTree, &node90);
+  i = avlAdd(&testTree, &node140);
+
+  leftRotate(&testTree);
+  
+  TEST_ASSERT_EQUAL_NODE( 60,  1, &node60);
+  TEST_ASSERT_EQUAL_NODE( 40,  0, &node40);
+  TEST_ASSERT_EQUAL_NODE(100, -1, &node100);
+  TEST_ASSERT_EQUAL_NODE( 80,  0, &node80);
+  TEST_ASSERT_EQUAL_NODE(120,  1, &node120);
+  TEST_ASSERT_EQUAL_NODE( 70,  0, &node70);
+  TEST_ASSERT_EQUAL_NODE( 90,  0, &node90);
+  TEST_ASSERT_EQUAL_NODE(140,  0, &node140);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

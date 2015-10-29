@@ -2,37 +2,35 @@
 #include <stdlib.h>
 
 int avlAdd(Node** rootPtr, Node* newNode){
-  int currentBalance = (*rootPtr)->balanceFactor;
-  int newBalance = 0;
+  // int currentBalance = (*rootPtr)->balanceFactor;
+  int newBalance = 1;
   if(newNode == NULL)
     return 0;
   
   if(((*rootPtr)->data) > (newNode->data)){
     if((*rootPtr)->left == NULL){
       (*rootPtr)->left = newNode;
-      currentBalance--;
+      (*rootPtr)->balanceFactor--;
     }
     else{
       newBalance = avlAdd(&(*rootPtr)->left, newNode);
       if(newBalance != 0)
-        currentBalance--;
+        (*rootPtr)->balanceFactor--;
     }
   }
   else{
     if((*rootPtr)->right == NULL){
       (*rootPtr)->right = newNode;
-      currentBalance++;
+      (*rootPtr)->balanceFactor++;
     }
     else{
       newBalance = avlAdd(&(*rootPtr)->right, newNode);
       if(newBalance != 0)
-        currentBalance++;      
+        (*rootPtr)->balanceFactor++;      
     }
   }
 
-  (*rootPtr)->balanceFactor = currentBalance;
-  
-  if(currentBalance == 0)
+  if((*rootPtr)->balanceFactor == 0 || newBalance == 0)
     return 0;
   else
     return 1;
