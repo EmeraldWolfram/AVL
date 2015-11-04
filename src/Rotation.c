@@ -6,12 +6,6 @@ void rightRotate(Node** tree){
   Node* brokenNode = (*tree)->left->right;
   Node* rightNode = (*tree);
   
-  (*tree)->balanceFactor++;
-  (*tree)->left->balanceFactor++; 
-  if((*tree)->left->balanceFactor == 0)
-    (*tree)->balanceFactor++;
-  
-  
   *tree = (*tree)->left;
   (*tree)->right = rightNode;
   (*tree)->right->left = brokenNode;
@@ -21,12 +15,6 @@ void leftRotate(Node** tree){
   Node* brokenNode = (*tree)->right->left;
   Node* leftNode = (*tree);
   
-  (*tree)->right->balanceFactor--;  
-  (*tree)->balanceFactor--;
-  if((*tree)->right->balanceFactor == 0)
-    (*tree)->balanceFactor--;
-  
-
   *tree = (*tree)->right;
   (*tree)->left = leftNode;
   (*tree)->left->right = brokenNode;

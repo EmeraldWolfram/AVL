@@ -1,5 +1,6 @@
 #include "unity.h"
 #include "Avl.h"
+#include "Rotation.h"
 #include "customAssertion.h"
 #include "Node.h"
 
@@ -119,6 +120,240 @@ void test_avlAdd_given_treeA_add_10_should_become_tree_B(void){
   TEST_ASSERT_EQUAL_NODE(40,  0, &node40);
 }
 
+/****************************************************
+ *  Test for Case(2,-1,0)                           *
+ *                                                  *
+ *  Tree A                                          *
+ *    (60)        Balance Factor:                   *
+ *       \        1. node60     +2                  *
+ *       (90)     2. node90     -1                  *
+ *       /        3. node80      0                  *
+ *    (80)                                          *
+ ****************************************************
+ *  rightLeftRotate will be called and form tree B  *
+ ****************************************************
+ *                                                  *
+ *  Tree B                                          *
+ *    (80)        Balance Factor:                   *
+ *    /  \        1. node60      0                  *
+ *  (60)(90)      2. node90      0                  *
+ *                3. node80      0                  *
+ ****************************************************/
+void test_avlAdd_calling_rightLeftRotate_given_treeA_with_case2_neg1_0_should_transform_to_treeB(void){
+  Node* testTree = &node60;
+    
+  int i = avlAdd(&testTree, &node90);
+  i = avlAdd(&testTree, &node80);
+  
+  TEST_ASSERT_TREE_LINK(&node80, &node60, &node90, testTree);
+  TEST_ASSERT_EQUAL_NODE(60,  0, &node60);
+  TEST_ASSERT_EQUAL_NODE(90,  0, &node90);
+  TEST_ASSERT_EQUAL_NODE(80,  0, &node80);
+
+}
+
+/****************************************************
+ *  Test for case (2,-1,-1)                         *
+ *                                                  *
+ *  Tree A            Balance Factor:               *
+ *    (60)            1. node60     +2              *
+ *    /  \            2. node40      0              *
+ *  (40) (100)        3. node100    -1              *
+ *       /   \        4. node80     -1              *
+ *    (80)   (120)    5. node120     0              *
+ *    /               6. node70      0              *
+ * (70)                                             *
+ ****************************************************
+ *  rightLeftRotate will be called and form tree B  *
+ ****************************************************
+ *  After Left Rotation, Tree A become Tree B       *
+ *                                                  *
+ *  Tree B            Balance Factor:               *
+ *      (80)          1. node60      0              *
+ *     /    \         2. node40      0              *
+ *  (60)    (100)     3. node100    +1              *
+ *  /  \       \      4. node80      0              *
+ *(40)(70)    (120)   5. node120     0              *
+ *                    6. node70      0              *
+ *                                                  *
+ ****************************************************/
+void test_avlAdd_calling_rightLeftRotate_given_treeA_with_case2_neg1_neg1_should_transform_to_treeB(void){
+  Node* testTree = &node60;
+  int i = avlAdd(&testTree, &node40);
+  i = avlAdd(&testTree, &node100);
+  i = avlAdd(&testTree, &node80);
+  i = avlAdd(&testTree, &node120);
+  i = avlAdd(&testTree, &node70);
+  
+  TEST_ASSERT_TREE_LINK( &node80, &node60, &node100, testTree);
+  TEST_ASSERT_TREE_LINK( &node60, &node40,  &node70, testTree->left);
+  TEST_ASSERT_TREE_LINK(&node100,    NULL, &node120, testTree->right);
+  TEST_ASSERT_EQUAL_NODE( 80,  0, &node80);
+  TEST_ASSERT_EQUAL_NODE( 60,  0, &node60);
+  TEST_ASSERT_EQUAL_NODE(100,  1, &node100);
+  TEST_ASSERT_EQUAL_NODE( 40,  0, &node40);
+  TEST_ASSERT_EQUAL_NODE( 70,  0, &node70);
+  TEST_ASSERT_EQUAL_NODE(120,  0, &node120);
+}
 
 
+/********************************************************
+ *  Test for case (2,-1,1)                             *
+ *                                                      *
+ *      Tree A                  Balance Factor:         *
+ *         (80)                 1. node80     +2        *
+ *        /   \                 2. node60      0        *
+ *    (60)    (120)             3. node120    -1        *
+ *            /   \             4. node100    +1        *
+ *         (100) (160)          5. node160     0        *
+ *             \                6. node110     0        *
+ *            (110)                                     *
+ ********************************************************
+ *  After Rotation, Tree A become Tree B                *
+ *                                                      *
+ *      Tree B                    Balance Factor:       *
+ *             (100)              1. node80     -1      *
+ *            /    \              2. node60      0      *
+ *          /       \             3. node120     0      *
+ *       (80)       (120)         4. node100     0      *
+ *      /           /   \         5. node160     0      *
+ *   (60)        (110) (160)      6. node110     0      *
+ ********************************************************/
+void test_avlAdd_calling_rightLeftRotate_given_treeA_with_case2_neg1_1_should_transform_to_treeB(void){
+  Node* testTree = &node80;
+  int i = avlAdd(&testTree, &node60);
+  i = avlAdd(&testTree, &node120);
+  i = avlAdd(&testTree, &node100);
+  i = avlAdd(&testTree, &node160);
+  i = avlAdd(&testTree, &node110);
+  
+  TEST_ASSERT_TREE_LINK(&node100, &node80, &node120, testTree);
+  TEST_ASSERT_TREE_LINK( &node80, &node60,     NULL, testTree->left);
+  TEST_ASSERT_TREE_LINK(&node120,&node110, &node160, testTree->right);
+  TEST_ASSERT_EQUAL_NODE( 80, -1, &node80);
+  TEST_ASSERT_EQUAL_NODE( 60,  0, &node60);
+  TEST_ASSERT_EQUAL_NODE(120,  0, &node120);
+  TEST_ASSERT_EQUAL_NODE(100,  0, &node100);
+  TEST_ASSERT_EQUAL_NODE(160,  0, &node160);
+  TEST_ASSERT_EQUAL_NODE(110,  0, &node110);
+}
+
+/****************************************************
+ *  Test for Case(-2,1,0)                           *
+ *                                                  *
+ *  Tree A                                          *
+ *    (60)        Balance Factor:                   *
+ *    /           1. node60     -2                  *
+ * (40)           2. node40     +1                  *
+ *    \           3. node50      0                  *
+ *    (50)                                          *
+ ****************************************************
+ *  leftRightRotate will be called and form tree B  *
+ ****************************************************
+ *                                                  *
+ *  Tree B                                          *
+ *    (50)        Balance Factor:                   *
+ *    /  \        1. node60      0                  *
+ *  (40)(60)      2. node40      0                  *
+ *                3. node50      0                  *
+ ****************************************************/
+void test_avlAdd_calling_leftRightRotate_given_treeA_with_caseNeg2_1_0_should_transform_to_treeB(void){
+  Node* testTree = &node60;
+    
+  int i = avlAdd(&testTree, &node40);
+  i = avlAdd(&testTree, &node50);
+  
+  TEST_ASSERT_TREE_LINK(&node50, &node40, &node60, testTree);
+  TEST_ASSERT_EQUAL_NODE(60,  0, &node60);
+  TEST_ASSERT_EQUAL_NODE(40,  0, &node40);
+  TEST_ASSERT_EQUAL_NODE(50,  0, &node50);
+
+}
+
+/****************************************************
+ *  Test for case (-2,1,-1)                         *
+ *                                                  *
+ *  Tree A            Balance Factor:               *
+ *       (60)         1. node60     -2              *
+ *      /   \         2. node30     +1              *
+ *    (30)  (80)      3. node80      0              *
+ *    /  \            4. node20      0              *
+ * (20) (50)          5. node50     -1              *
+ *     /              6. node40      0              *
+ *   (40)                                           *
+ ****************************************************
+ *  leftRightRotate will be called and form tree B  *
+ ****************************************************
+ *  After Rotation, Tree A become Tree B            *
+ *                                                  *
+ *  Tree B            Balance Factor:               *
+ *      (50)          1. node60     +1              *
+ *     /    \         2. node30      0              *
+ *  (30)    (60)      3. node80      0              *
+ *  /  \       \      4. node20      0              *
+ *(20)(40)    (80)    5. node50      0              *
+ *                    6. node40      0              *
+ *                                                  *
+ ****************************************************/
+void test_avlAdd_calling_leftRightRotate_given_treeA_with_caseNeg2_1_neg1_should_transform_to_treeB(void){
+  Node* testTree = &node60;
+  int i = avlAdd(&testTree, &node30);
+  i = avlAdd(&testTree, &node80);
+  i = avlAdd(&testTree, &node20);
+  i = avlAdd(&testTree, &node50);
+  i = avlAdd(&testTree, &node40);
+  
+  TEST_ASSERT_TREE_LINK(&node50, &node30, &node60, testTree);
+  TEST_ASSERT_TREE_LINK(&node30, &node20, &node40, testTree->left);
+  TEST_ASSERT_TREE_LINK(&node60,    NULL, &node80, testTree->right);
+  TEST_ASSERT_EQUAL_NODE(60, 1, &node60);
+  TEST_ASSERT_EQUAL_NODE(30, 0, &node30);
+  TEST_ASSERT_EQUAL_NODE(80, 0, &node80);
+  TEST_ASSERT_EQUAL_NODE(20, 0, &node20);
+  TEST_ASSERT_EQUAL_NODE(50, 0, &node50);
+  TEST_ASSERT_EQUAL_NODE(40, 0, &node40);
+}
+
+
+/********************************************************
+ *  Test for case (-2,1,1)                              *
+ *                                                      *
+ *      Tree A                  Balance Factor:         *
+ *         (80)                 1. node80     -2        *
+ *        /   \                 2. node50     +1        *
+ *    (50)    (120)             3. node120     0        *
+ *    /  \                      4. node30      0        *
+ * (30) (60)                    5. node60     +1        *
+ *         \                    6. node70      0        *
+ *        (70)                                          *
+ ********************************************************
+ *  leftRightRotate will be called and form tree B      *
+ ********************************************************
+ *                                                      *
+ *      Tree B                    Balance Factor:       *
+ *        (60)                    1. node80      0      *
+ *       /   \                    2. node50     -1      *
+ *    (50)  (80)                  3. node120     0      *
+ *    /     /  \                  4. node30      0      *
+ *  (30)  (70) (120)              5. node60      0      *
+ *                                6. node70      0      *
+ ********************************************************/
+void test_avlAdd_calling_leftRightRotate_given_treeA_with_caseNeg2_1_1_should_transform_to_treeB(void){
+  Node* testTree = &node80;
+  int i = avlAdd(&testTree, &node50);
+  i = avlAdd(&testTree, &node120);
+  i = avlAdd(&testTree, &node30);
+  i = avlAdd(&testTree, &node60);
+  i = avlAdd(&testTree, &node70);
+  
+  TEST_ASSERT_TREE_LINK(&node60, &node50, &node80, testTree);
+  TEST_ASSERT_TREE_LINK(&node50, &node30,    NULL, testTree->left);
+  TEST_ASSERT_TREE_LINK(&node80, &node70,&node120, testTree->right);
+  TEST_ASSERT_EQUAL_NODE( 80,  0, &node80);
+  TEST_ASSERT_EQUAL_NODE( 50, -1, &node50);
+  TEST_ASSERT_EQUAL_NODE(120,  0, &node120);
+  TEST_ASSERT_EQUAL_NODE( 30,  0, &node30);
+  TEST_ASSERT_EQUAL_NODE( 60,  0, &node60);
+  TEST_ASSERT_EQUAL_NODE( 70,  0, &node70);
+}
 
