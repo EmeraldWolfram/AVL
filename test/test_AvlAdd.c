@@ -2,6 +2,7 @@
 #include "Avl.h"
 #include "Rotation.h"
 #include "customAssertion.h"
+#include "ErrorObject.h"
 #include "Node.h"
 
 Node  node10, node20, node30, node40, node50, node60, node70, node80, node90;

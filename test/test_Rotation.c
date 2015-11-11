@@ -3,6 +3,7 @@
 #include "Avl.h"
 #include "Node.h"
 #include "customAssertion.h"
+#include "ErrorObject.h"
 #include <stdlib.h>
 #include <stdio.h>
 
