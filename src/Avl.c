@@ -105,10 +105,10 @@ Node* avlRemove(Node** rootPtr, int value, int* heightChange){
         }
         if((*rootPtr)->left->right != NULL){
           tempNode->balanceFactor--;
-          if(tempNode->left == NULL){
+          if(tempNode->left == NULL)
             (*rootPtr)->left->balanceFactor--;
-            localChange = 1;
-          }
+          else
+            localChange = 0;
           tempNode->right   = NULL;
           brokenLeft        = (*rootPtr)->left;
         }
@@ -126,10 +126,10 @@ Node* avlRemove(Node** rootPtr, int value, int* heightChange){
         }
         if((*rootPtr)->right->left != NULL){
           tempNode->balanceFactor++;
-          if(tempNode->right == NULL){
+          if(tempNode->right == NULL)
             (*rootPtr)->right->balanceFactor++;
+          else
             localChange = 1;
-          }
           tempNode->left   = NULL;
           brokenRight        = (*rootPtr)->right;
         }
@@ -146,16 +146,18 @@ Node* avlRemove(Node** rootPtr, int value, int* heightChange){
     if((*rootPtr)->right == NULL)
       return NULL;
     removedNode = avlRemove(&((*rootPtr)->right), value, heightChange);
-    (*rootPtr)->balanceFactor--;
-    if((*rootPtr)->balanceFactor != 0)
+    if(heightChange != 0)
+      (*rootPtr)->balanceFactor--;
+    if((*rootPtr)->balanceFactor == 0)
       localChange = 0;
   }
   else{
     if((*rootPtr)->left == NULL)
       return NULL;
     removedNode = avlRemove(&((*rootPtr)->left), value, heightChange);
-    (*rootPtr)->balanceFactor++;
-    if((*rootPtr)->balanceFactor != 0)
+    if(heightChange != 0)
+      (*rootPtr)->balanceFactor++;
+    if((*rootPtr)->balanceFactor == 0)
       localChange = 0;
   }
   //*********** ROTATION ***************************

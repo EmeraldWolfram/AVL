@@ -93,9 +93,9 @@ void test_avlRemove_given_treeA_remove_30_should_become_treeB(void){
  *  
  *        (60)0       -(20)        (60)0
  *       /    \       ----->      /    \
- *   (20)0    (90)-1           (10)+1  (90)-1
- *  /   \     /                   \    /
- *(10) (40) (70)                 (40)(70)
+ *   (20)0    (90)-1           (10)+1   (90)-1
+ *  /   \     /                   \     /
+ *(10)0(40)0(70)0                (40)0(70)0
  *
  *
  *********************************************************/
@@ -115,6 +115,9 @@ void test_avlRemove_given_treeA_remove_20_should_become_treeB(void){
   TEST_ASSERT_TREE_LINK(&node10,    NULL, &node40, testTree->left);
   TEST_ASSERT_TREE_LINK(&node90, &node70,    NULL, testTree->right);
   TEST_ASSERT_EQUAL_NODE(10,  1, &node10);
+  TEST_ASSERT_EQUAL_NODE(90, -1, &node90);
+  TEST_ASSERT_EQUAL_NODE(70,  0, &node70);
+  TEST_ASSERT_EQUAL_NODE(40,  0, &node40);
   TEST_ASSERT_EQUAL_NODE(60,  0, &node60);
 }
 
