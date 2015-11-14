@@ -59,7 +59,7 @@ void test_avlRemove_given_treeA_remove_90_should_become_treeB(void){
   int i = avlAdd(&testTree, &node30);
   i = avlAdd(&testTree, &node90);
   
-  Node* removedNode = avlRemove(&testTree, 90, 0);
+  Node* removedNode = avlRemove(&testTree, 90, &i);
   
   TEST_ASSERT_EQUAL_PTR(&node90, removedNode);
   TEST_ASSERT_TREE_LINK(&node60, &node30, NULL, testTree);
@@ -80,7 +80,7 @@ void test_avlRemove_given_treeA_remove_30_should_become_treeB(void){
   int i = avlAdd(&testTree, &node30);
   i = avlAdd(&testTree, &node90);
   
-  Node* removedNode = avlRemove(&testTree, 30, 0);
+  Node* removedNode = avlRemove(&testTree, 30, &i);
   
   TEST_ASSERT_EQUAL_PTR(&node30, removedNode);
   TEST_ASSERT_TREE_LINK(&node60, NULL, &node90, testTree);
@@ -254,32 +254,28 @@ void test_avlRemove_given_treeA_remove_80_should_call_rightRotate_and_become_tre
  *  
  *        (60)0       -(20)        (60)0
  *       /    \       ----->      /    \
- *   (20)0    (90)-1           (10)+1   (90)-1
- *  /   \     /                   \     /
- *(10)0(40)0(70)0                (40)0(70)0
+ *   (20)0    (90)-1           (10)0   (90)-1
+ *  /         /                        /
+ *(10)0    (70)0                    (70)0
  *
  *
  *********************************************************/
 
-// void test_avlRemove_given_treeA_remove_20_should_become_treeB(void){
-  // Node* testTree = &node60;
-  // int i = avlAdd(&testTree, &node20);
-  // i = avlAdd(&testTree, &node90);
-  // i = avlAdd(&testTree, &node10);
-  // i = avlAdd(&testTree, &node70);
-  // i = avlAdd(&testTree, &node40);
+void test_avlRemove_given_treeA_remove_20_should_become_treeB(void){
+  Node* testTree = &node60;
+  int i = avlAdd(&testTree, &node20);
+  i = avlAdd(&testTree, &node90);
+  i = avlAdd(&testTree, &node10);
+  i = avlAdd(&testTree, &node70);
+
+  Node* removedNode = avlRemove(&testTree, 20, &i);
   
-  // Node* removedNode = avlRemove(&testTree, 20, &i);
-  // printf("%d", i);
-  
-  // TEST_ASSERT_EQUAL_PTR(&node20, removedNode);
-  // TEST_ASSERT_TREE_LINK(&node60, &node10, &node90, testTree);
-  // TEST_ASSERT_TREE_LINK(&node10,    NULL, &node40, testTree->left);
-  // TEST_ASSERT_TREE_LINK(&node90, &node70,    NULL, testTree->right);
-  // TEST_ASSERT_EQUAL_NODE(10,  1, &node10);
-  // TEST_ASSERT_EQUAL_NODE(90, -1, &node90);
-  // TEST_ASSERT_EQUAL_NODE(70,  0, &node70);
-  // TEST_ASSERT_EQUAL_NODE(40,  0, &node40);
-  // TEST_ASSERT_EQUAL_NODE(60,  0, &node60);
-// }
+  TEST_ASSERT_EQUAL_PTR(&node20, removedNode);
+  TEST_ASSERT_TREE_LINK(&node60, &node10, &node90, testTree);
+  TEST_ASSERT_TREE_LINK(&node90, &node70,    NULL, testTree->right);
+  TEST_ASSERT_EQUAL_NODE(10,  0, &node10);
+  TEST_ASSERT_EQUAL_NODE(90, -1, &node90);
+  TEST_ASSERT_EQUAL_NODE(70,  0, &node70);
+  TEST_ASSERT_EQUAL_NODE(60,  0, &node60);
+}
 

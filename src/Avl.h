@@ -7,4 +7,7 @@ int avlAdd(Node** rootPtr, Node* newNode);
 Node* avlRemove(Node** rootPtr, int value, int* heightChange);
 
 
+void testPtr(int* ptr);
+
+
 #endif // Avl_H
