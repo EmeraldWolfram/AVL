@@ -108,17 +108,14 @@ Node* avlRemove(Node** rootPtr, int value, int* heightChange){
           tempNode = newRoot;
           newRoot  = newRoot->right;
         }
+        newRoot->balanceFactor = currentBF;
         if((*rootPtr)->left->right != NULL){
           tempNode->balanceFactor--;
-          if(tempNode->left == NULL){
-            (*rootPtr)->left->balanceFactor--;
-            *heightChange = 1;
-          }
           tempNode->right   = NULL;
           brokenLeft        = (*rootPtr)->left;
         }
-        newRoot->balanceFactor = currentBF;
-        newRoot->balanceFactor++;
+        if(tempNode->left == NULL || newRoot == (*rootPtr)->left)
+          newRoot->balanceFactor++;
       }
       else{
         tempNode    = (*rootPtr);
@@ -129,18 +126,17 @@ Node* avlRemove(Node** rootPtr, int value, int* heightChange){
           tempNode = newRoot;
           newRoot  = newRoot->left;
         }
+        newRoot->balanceFactor = currentBF;
         if((*rootPtr)->right->left != NULL){
           tempNode->balanceFactor++;
-          if(tempNode->right == NULL){
-            (*rootPtr)->right->balanceFactor++;
-            *heightChange = 1;
-          }
           tempNode->left   = NULL;
           brokenRight      = (*rootPtr)->right;
         }
-        newRoot->balanceFactor = currentBF;
-        newRoot->balanceFactor--;
+        if(tempNode->right == NULL || newRoot == (*rootPtr)->right)
+          newRoot->balanceFactor--;
       }
+      if(newRoot->balanceFactor == 0)
+        *heightChange = 1;
       (*rootPtr)        = newRoot;
       (*rootPtr)->right = brokenRight;
       (*rootPtr)->left  = brokenLeft;
@@ -154,17 +150,16 @@ Node* avlRemove(Node** rootPtr, int value, int* heightChange){
     if(childChange == 1)
       (*rootPtr)->balanceFactor--;
     if((*rootPtr)->balanceFactor == 0)
-      *heightChange = 0;
+      *heightChange = 1;
   }
   else{
     if((*rootPtr)->left == NULL)
       return NULL;
     removedNode = avlRemove(&((*rootPtr)->left), value, &childChange);
-    if(childChange == 1){
+    if(childChange == 1)
       (*rootPtr)->balanceFactor++;
-    }
     if((*rootPtr)->balanceFactor == 0)
-      *heightChange = 0;
+      *heightChange = 1;
   }
   //*********** ROTATION ***************************
   if((*rootPtr)->balanceFactor == 2){
