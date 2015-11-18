@@ -99,47 +99,56 @@ Node* avlRemove(Node** rootPtr, int value, int* heightChange){
     }
     else{
       Node *brokenLeft, *brokenRight;
-      if((*rootPtr)->left != NULL){
-        tempNode   = (*rootPtr);
-        newRoot    = (*rootPtr)->left;
-        brokenLeft = (*rootPtr)->left->left;
-        brokenRight = (*rootPtr)->right;
-        while(newRoot->right != NULL){
-          tempNode = newRoot;
-          newRoot  = newRoot->right;
-        }
+      if((*rootPtr)->right != NULL){
+        newRoot = avlGetReplacer(&(*rootPtr)->right, &childChange);
+        brokenLeft = (*rootPtr)->left;
+        if((*rootPtr)->right->left != NULL)
+          brokenRight = (*rootPtr)->right;
+        else
+          brokenRight = NULL;
         newRoot->balanceFactor = currentBF;
-        if((*rootPtr)->left->right != NULL){
-          tempNode->balanceFactor--;
-          tempNode->right   = NULL;
-          brokenLeft        = (*rootPtr)->left;
-        }
-        if(tempNode->left == NULL || newRoot == (*rootPtr)->left)
-          newRoot->balanceFactor++;
+        if(childChange == 1)
+          newRoot->balanceFactor--;
+        if(newRoot->balanceFactor < 1)
+          *heightChange = 1;
       }
       else{
-        tempNode    = (*rootPtr);
-        newRoot     = (*rootPtr)->right;
-        brokenRight = (*rootPtr)->right->right;
-        brokenLeft  = (*rootPtr)->left;
-        while(newRoot->left != NULL){
-          tempNode = newRoot;
-          newRoot  = newRoot->left;
-        }
+        newRoot = (*rootPtr)->left;
+        brokenLeft  = NULL;
+        brokenRight = NULL;
         newRoot->balanceFactor = currentBF;
-        if((*rootPtr)->right->left != NULL){
-          tempNode->balanceFactor++;
-          tempNode->left   = NULL;
-          brokenRight      = (*rootPtr)->right;
-        }
-        if(tempNode->right == NULL || newRoot == (*rootPtr)->right)
-          newRoot->balanceFactor--;
-      }
-      if(newRoot->balanceFactor == 0)
+        newRoot->balanceFactor++;
         *heightChange = 1;
+      }
       (*rootPtr)        = newRoot;
       (*rootPtr)->right = brokenRight;
       (*rootPtr)->left  = brokenLeft;
+      
+      if((*rootPtr)->balanceFactor == -2){
+        if((*rootPtr)->left->balanceFactor == 1){
+          (*rootPtr)->balanceFactor = 0;
+          (*rootPtr)->left->balanceFactor = 0;
+          if((*rootPtr)->left->right->balanceFactor == 1){
+            (*rootPtr)->left->balanceFactor = -1;   
+          }
+          if((*rootPtr)->left->right->balanceFactor == -1){
+            (*rootPtr)->balanceFactor = 1;
+          }
+          (*rootPtr)->left->right->balanceFactor = 0;   
+          *heightChange = 1;
+          leftRightRotate(rootPtr);
+        }
+        else{
+          (*rootPtr)->balanceFactor++;
+          (*rootPtr)->left->balanceFactor++; 
+          if((*rootPtr)->left->balanceFactor == 0)
+            (*rootPtr)->balanceFactor++;
+          if((*rootPtr)->left->balanceFactor != 0)
+            *heightChange = 0;
+          rightRotate(rootPtr);    
+        } 
+      }
+    
     }
     return removedNode;
   }
@@ -207,6 +216,56 @@ Node* avlRemove(Node** rootPtr, int value, int* heightChange){
   return removedNode;
 }
 
+Node* avlGetReplacer(Node** rootPtr, int* heightChange){
+  Node* replacerNode, *brokenLeft, *brokenRight;
+  int childChange;
+  *heightChange = 1;
+  
+  if((*rootPtr) == NULL)
+    ThrowError(ERR_NULL_PTR, "Input AVL is Empty");
+  
+  if((*rootPtr)->left == NULL){
+    replacerNode  = (*rootPtr);
+  }
+  else{
+    brokenRight = (*rootPtr)->left->right;
+    if((*rootPtr)->left != NULL){
+      replacerNode = avlGetReplacer(&(*rootPtr)->left, &childChange);
+      if(replacerNode == (*rootPtr)->left){
+        (*rootPtr)->left = brokenRight;
+        if((*rootPtr)->balanceFactor >= 0)
+          *heightChange = 0;
+      }
+    }
+    if(childChange == 1)
+      (*rootPtr)->balanceFactor++;
+  }
+  //*********** ROTATION ***************************
+  if((*rootPtr)->balanceFactor == 2){
+    if((*rootPtr)->right->balanceFactor == -1){
+      (*rootPtr)->balanceFactor = 0;
+      (*rootPtr)->right->balanceFactor = 0;
+      if((*rootPtr)->right->left->balanceFactor == -1){
+        (*rootPtr)->right->balanceFactor = 1;   
+      }
+      if((*rootPtr)->right->left->balanceFactor == 1){
+        (*rootPtr)->balanceFactor = -1;
+      }
+      (*rootPtr)->right->left->balanceFactor = 0;   
+      rightLeftRotate(rootPtr);
+    }
+    else{
+      (*rootPtr)->right->balanceFactor--;  
+      (*rootPtr)->balanceFactor--;
+      if((*rootPtr)->right->balanceFactor == 0)
+        (*rootPtr)->balanceFactor--;
+      leftRotate(rootPtr);
+    }
+  }
+  
+  replacerNode->right = NULL;
+  return replacerNode;
+}
 
 
 
